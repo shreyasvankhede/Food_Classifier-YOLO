@@ -73,51 +73,105 @@ with col_cam:
         st.session_state.camera_open = True
 
 # =========================================================
-# CAMERA MODE
+# CAMERA MODE (Camera + Upload)
 # =========================================================
 if st.session_state.camera_open:
 
-    camera_image = st.camera_input("Take a picture")
+    st.markdown("### Scan Food")
+
+    # 🔴 Close Scanner Button
+    if st.button("Close Scanner"):
+        st.session_state.camera_open = False
+        st.rerun()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        camera_image = st.camera_input("Take a picture")
+
+    with col2:
+        uploaded_image = st.file_uploader(
+            "Or upload an image",
+            type=["jpg", "jpeg", "png"]
+        )
+
+    image_to_process = None
 
     if camera_image:
-        st.image(camera_image, use_container_width=True)
+        image_to_process = camera_image
+    elif uploaded_image:
+        image_to_process = uploaded_image
+
+    if image_to_process:
+
+        st.image(image_to_process, use_container_width=True)
 
         with st.spinner("Detecting food..."):
-            result = user.detect_food(camera_image)
+            result = user.detect_food(image_to_process)
 
         if result:
             class_counts, detected_names = result
 
-            if detected_names:
-                st.write("Confirm detected foods")
+            if class_counts:
+
+                st.markdown("### Confirm & Adjust Detected Foods")
+
                 confirmed_items = []
 
-                for idx, food in enumerate(class_counts.keys()):
+                meal_type = st.selectbox(
+                    "Select Meal",
+                    ("Breakfast", "Lunch", "Dinner", "Snacks"),
+                    index=None,
+                    placeholder="Choose meal type"
+                )
+
+                st.divider()
+
+                for idx, food in enumerate(set(detected_names)):
+
+                  
+                    st.markdown(f"**Detected:** {food}")
+
                     suggestions = user.suggest_similar_foods(food)
 
-                    corrected = st.selectbox(
-                        food,
-                        suggestions,
-                        key=f"cam_name_{idx}"
-                    )
+                    colA, colB = st.columns([3, 1.5])
 
-                    qty = st.number_input(
-                        "grams",
-                        min_value=1,
-                        max_value=1000,
-                        value=100,
-                        key=f"cam_qty_{idx}"
-                    )
+                    with colA:
+                        corrected = st.selectbox(
+                            "Food Name",
+                            suggestions if suggestions else [food],
+                            key=f"cam_name_{idx}"
+                        )
+
+                    with colB:
+                        qty = st.number_input(
+                            "Quantity (g)",
+                            min_value=1,
+                            max_value=1000,
+                            value=100,   
+                            key=f"cam_qty_{idx}"
+                        )
 
                     confirmed_items.append((corrected, qty))
+                    st.divider()
 
-                if st.button("Add Detected Meal"):
-                    for food, qty in confirmed_items:
-                        user.add_food_to_meal("Breakfast", food, qty)
-                    st.success("Meal logged successfully!")
-                    st.session_state.camera_open = False
+                if st.button("Add Detected Meal", use_container_width=True):
+
+                    if not meal_type:
+                        st.warning("Please select meal type")
+                    else:
+                        for food, qty in confirmed_items:
+                            user.add_food_to_meal(meal_type, food, qty)
+
+                        st.success("Meal logged successfully!")
+                        st.session_state.camera_open = False
+                        st.rerun()
+
             else:
                 st.warning("No food detected.")
+
+        else:
+            st.warning("Detection failed.")
 
 # =========================================================
 # SEARCH MODE

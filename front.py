@@ -8,6 +8,9 @@ auth = AuthManager()
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+if "Name" not in st.session_state:
+    st.session_state.Name=None
+
 if "username" not in st.session_state:
     st.session_state.username = None
 
@@ -33,6 +36,8 @@ with tab1:
         if auth.login(u, p):
             st.session_state.logged_in = True
             st.session_state.username = u
+            user = User(u)
+            st.session_state.Name=user.get_name()
             st.switch_page("pages/Food_Detection.py")
         else:
             st.error("Invalid credentials")
@@ -49,7 +54,7 @@ with tab2:
     confirm_p = st.text_input("Confirm Password", type="password", key="C_reg_pass")
 
     st.markdown("### Profile Details")
-
+    Name=st.text_input("Name")
     age = st.number_input("Age", min_value=10, max_value=100, step=1)
     gender = st.selectbox("Gender", ("Male", "Female"))
     weight = st.number_input("Weight (kg)", min_value=30.0, max_value=200.0)
@@ -75,7 +80,7 @@ with tab2:
 
                 user = User(u)
                 user.add_profile_details(
-                    u,
+                    Name,
                     age,
                     gender,
                     weight,
@@ -85,7 +90,8 @@ with tab2:
 
                 st.session_state.logged_in = True
                 st.session_state.username = u
-
+                user = User(u)
+                st.session_state.Name=user.get_name()
                 st.switch_page("pages/Food_Detection.py")
 
             else:

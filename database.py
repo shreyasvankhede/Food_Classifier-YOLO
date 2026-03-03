@@ -17,7 +17,7 @@ class UserDB:
                ;""")
         self.cursor.execute("""
 CREATE TABLE IF NOT EXISTS user_profile (
-    username TEXT PRIMARY KEY,
+    Name TEXT PRIMARY KEY,
     age INTEGER,
     gender TEXT,
     weight REAL,

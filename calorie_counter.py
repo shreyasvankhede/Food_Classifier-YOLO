@@ -16,7 +16,6 @@ DB_PATH = "data/food_db.sqlite"
 # Load model ONLY once
 MODEL = YOLO("model/best.pt")
 
-
 DATE = datetime.now().strftime("%Y-%m-%d")
 
 
@@ -33,8 +32,10 @@ class MealType:
 class User:
     
     def __init__(self, username):
-        self.username =username
-        self.hash_name=hashlib.sha256((username.strip().lower()).encode()).hexdigest()
+        self.username = username
+        self.hash_name = hashlib.sha256(
+            (username.strip().lower()).encode()
+        ).hexdigest()
         self.USER_PATH = f"data/Users/{self.hash_name}.sqlite"
     
 
@@ -44,38 +45,45 @@ class User:
         return conn
     
 
-    def add_profile_details(self, username, age, gender, weight, height, activity):
+    def add_profile_details(self, Name, age, gender, weight, height, activity):
 
-     conn = sqlite3.connect(self.USER_PATH)
-     cursor = conn.cursor()
+        conn = sqlite3.connect(self.USER_PATH)
+        cursor = conn.cursor()
 
-     cursor.execute("""
-        INSERT OR REPLACE INTO user_profile
-        (username, age, gender, weight, height, activity_level)
-        VALUES (?, ?, ?, ?, ?, ?)
-     """, (username, age, gender, weight, height, activity))
+        cursor.execute("""
+            INSERT OR REPLACE INTO user_profile
+            (Name, age, gender, weight, height, activity_level)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (Name, age, gender, weight, height, activity))
 
-     conn.commit()
-     conn.close()
+        conn.commit()
+        conn.close()
 
     def get_profile_details(self, username):
-     conn = sqlite3.connect(self.USER_PATH)
-     cursor = conn.cursor()
+        conn = sqlite3.connect(self.USER_PATH)
+        cursor = conn.cursor()
 
-     cursor.execute("""
-        SELECT age, gender, weight, height, activity_level
-        FROM user_profile
-        WHERE username = ?
-     """, (username,))
+        cursor.execute("""
+            SELECT age, gender, weight, height, activity_level
+            FROM user_profile
+        """)
 
-     result = cursor.fetchone()
-
-     conn.close()
-     return result
+        result = cursor.fetchone()
+        conn.close()
+        return result
  
     # -------------------------
     # FOOD LOOKUP
     # -------------------------
+
+    def get_name(self):
+        conn = sqlite3.connect(self.USER_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT Name FROM user_profile")
+        name = cursor.fetchone()
+        conn.close()
+        return name
+    
     def get_food_info(self, food):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -89,7 +97,6 @@ class User:
 
         result = cursor.fetchone()
         conn.close()
-
         return result
 
     # -------------------------
@@ -118,36 +125,32 @@ class User:
         return [name for name, score, _ in matches]
 
     # -------------------------
-    # CREATE MEAL
-    # -------------------------
-    
-
-    # -------------------------
     # CALCULATION (PER 100g → quantity)
     # -------------------------
     def calculate_nutrition(self, nutrition, quantity):
-        # DB values are per 100g
         return tuple(x * quantity / 100 for x in nutrition)
 
     # -------------------------
     # ADD FOOD TO MEAL
     # -------------------------
-    def add_food_to_meal(self, meal_type:str, food, quantity=100,date=DATE):
+    def add_food_to_meal(self, meal_type: str, food, quantity=100, date=DATE):
+
         nutrition = self.get_food_info(food)
-        meal_type=meal_type.upper()
-        meal_type=getattr(MealType, meal_type)
+
+        meal_type = meal_type.upper()
+        meal_type = getattr(MealType, meal_type)
+
         if nutrition is None:
             print("Food not found")
             return
-
 
         conn = sqlite3.connect(self.USER_PATH)
         cursor = conn.cursor()
 
         cursor.execute("""
             INSERT INTO meals
-            (meal_type, dish_name, quantity_g,meal_time)
-            VALUES (?, ?, ?,?)
+            (meal_type, dish_name, quantity_g, meal_time)
+            VALUES (?, ?, ?, ?)
         """, (
             meal_type,
             food,
@@ -161,13 +164,15 @@ class User:
     # -------------------------
     # CALCULATE SINGLE MEAL TOTAL
     # -------------------------
-
     def calculate_meal_cals(self, meal_type, date=DATE):
-        meal_type=meal_type.upper()
-        meal_type=getattr(MealType, meal_type)
+
+        meal_type = meal_type.upper()
+        meal_type = getattr(MealType, meal_type)
+
         conn = self._get_conn()
         cursor = conn.cursor()
 
+        # ✅ FIXED: removed self-join explosion
         cursor.execute("""
             SELECT
                 SUM((mi.quantity_g / 100.0) * f.calories_kcal),
@@ -177,11 +182,10 @@ class User:
                 SUM((mi.quantity_g / 100.0) * f.fibre_g),
                 SUM((mi.quantity_g / 100.0) * f.free_sugar_g)
             FROM meals mi
-            JOIN meals m ON mi.meal_type = m.meal_type
             JOIN food_db.foods_master f
                 ON mi.dish_name = f.dish_name
             WHERE mi.meal_type = ?
-            AND DATE(m.meal_time) = ?
+            AND DATE(mi.meal_time) = ?
         """, (meal_type, date))
 
         result = cursor.fetchone()
@@ -200,6 +204,7 @@ class User:
         conn = self._get_conn()
         cursor = conn.cursor()
 
+        # ✅ FIXED: removed self-join explosion
         cursor.execute("""
             SELECT
                 SUM((mi.quantity_g / 100.0) * f.calories_kcal),
@@ -209,10 +214,9 @@ class User:
                 SUM((mi.quantity_g / 100.0) * f.fibre_g),
                 SUM((mi.quantity_g / 100.0) * f.free_sugar_g)
             FROM meals mi
-            JOIN meals m ON mi.meal_type = m.meal_type
             JOIN food_db.foods_master f
                 ON mi.dish_name = f.dish_name
-            WHERE DATE(m.meal_time) = ?
+            WHERE DATE(mi.meal_time) = ?
         """, (date,))
 
         result = cursor.fetchone()
@@ -256,10 +260,13 @@ class User:
         return "Entry updated"
     
     def get_meal_entries(self, meal_type, date=DATE):
-        meal_type=meal_type.upper()
-        meal_type=getattr(MealType, meal_type)
+
+        meal_type = meal_type.upper()
+        meal_type = getattr(MealType, meal_type)
+
         conn = self._get_conn()
 
+        # ✅ FIXED: removed self-join explosion
         query = """
             SELECT
                 mi.item_id,
@@ -272,20 +279,18 @@ class User:
                 (mi.quantity_g / 100.0) * f.fibre_g AS fibre,
                 (mi.quantity_g / 100.0) * f.free_sugar_g AS sugar
             FROM meals mi
-            JOIN meals m ON mi.meal_type = m.meal_type
             JOIN food_db.foods_master f
                 ON mi.dish_name = f.dish_name
             WHERE mi.meal_type = ?
-            AND DATE(m.meal_time) = ?
+            AND DATE(mi.meal_time) = ?
         """
 
         df = pd.read_sql_query(query, conn, params=(meal_type, date))
         conn.close()
-
         return df
 
     # -------------------------
-    # YOLO DETECTION (USES GLOBAL MODEL)
+    # YOLO DETECTION
     # -------------------------
     def detect_food(self, img):
         if img is None:
@@ -306,10 +311,3 @@ class User:
         class_counts = Counter(detected_names)
 
         return class_counts, detected_names
-    
-
-       
-
-
-
-       
