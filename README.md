@@ -13,6 +13,10 @@ A full-stack calorie tracker built for Indian cuisine. It combines a custom-trai
 <img width="1920" height="1080" alt="Screenshot 2026-03-04 195146" src="https://github.com/user-attachments/assets/f9612bd5-0f8b-4062-ae4c-cd25ef295eaa" />
 <img width="1920" height="1080" alt="Screenshot 2026-03-04 195224" src="https://github.com/user-attachments/assets/639625b9-ad8d-490b-9250-0322bb45da2e" />
 
+<img width="1464" height="863" alt="image" src="https://github.com/user-attachments/assets/dbb48c6b-36f6-4341-b9e6-c184fbf29588" />
+<img width="1390" height="877" alt="image" src="https://github.com/user-attachments/assets/8c3280eb-4caa-496f-ab6b-3af07e92f782" />
+
+
 https://github.com/user-attachments/assets/4c6ba9db-a718-4ffd-aa88-1fdf99384e4b
 
 <img width="1920" height="1080" alt="Screenshot 2026-03-04 195234" src="https://github.com/user-attachments/assets/4cecbc38-169f-4c84-8d2c-53c78242be11" />
