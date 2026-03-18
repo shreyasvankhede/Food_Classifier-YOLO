@@ -68,10 +68,10 @@ selected_date = selected_date.strftime("%Y-%m-%d")
 # DAILY CALORIES
  
 daily_macros = user.calculate_daily_macros(date=selected_date)
-consumed = daily_macros[0] or 0
-consumed_protein = daily_macros[1] or 0 if len(daily_macros) > 1 else 0
-consumed_carbs   = daily_macros[2] or 0 if len(daily_macros) > 2 else 0
-consumed_fats    = daily_macros[3] or 0 if len(daily_macros) > 3 else 0
+consumed         = daily_macros[0] or 0  
+consumed_carbs   = daily_macros[1] or 0  
+consumed_protein = daily_macros[2] or 0 
+consumed_fats    = daily_macros[3] or 0  
 
  
 # PROFILE + GOAL
