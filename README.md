@@ -10,9 +10,6 @@ A full-stack calorie tracker built for Indian cuisine. It combines a custom-trai
 
 ---
 
-## Demo
-
-*(Add a screen recording or GIF of the app here)*
 
 ---
 
