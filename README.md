@@ -9,9 +9,21 @@ A full-stack calorie tracker built for Indian cuisine. It combines a custom-trai
 ![SQLite](https://img.shields.io/badge/SQLite-Database-lightgrey)
 
 ---
+## Screenshots
+
+<img width="1920" height="1080" alt="Screenshot 2026-03-04 195146" src="https://github.com/user-attachments/assets/5334e4cc-9c3c-4a30-8363-74965d948bd3" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-03-04 195224" src="https://github.com/user-attachments/assets/aa79a6da-85cd-47fb-a9b2-cb64fb65128e" />
+
+<img width="1390" height="877" alt="Screenshot 2026-03-04 232559" src="https://github.com/user-attachments/assets/8b8a6b98-426e-450c-8702-393744d4ea8b" />
+
+https://github.com/user-attachments/assets/ca1b4333-c38f-49ec-9b14-bffc8ab2967c
+
+<img width="1464" height="863" alt="Screenshot 2026-03-04 232506" src="https://github.com/user-attachments/assets/b57386b2-29e8-45bc-9df3-ee251fe23ad7" />
 
 
----
+<img width="1522" height="1064" alt="Screenshot 2026-03-04 213038" src="https://github.com/user-attachments/assets/3bed56fb-da81-4f3c-b603-1ed8d353d0f3" />
+
 
 ## Background
 
