@@ -7,7 +7,11 @@ A full-stack calorie tracker built for Indian cuisine. It combines a custom-trai
 ![PyTorch](https://img.shields.io/badge/PyTorch-ML%20Backend-orange)
 ![Streamlit](https://img.shields.io/badge/Streamlit-UI-red)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-lightgrey)
+---
+## 🚀 Live Demo
+[**▶ Try Bhojan-AI**](https://bhojanai.onrender.com/)
 
+> ⚠️ Use User:Shreyas123 with Pass:Shreyas123 if you dont wish to create new
 ---
 ## Screenshots
 
